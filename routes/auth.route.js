@@ -7,20 +7,13 @@ const router = expres.Router();
 
 router.post(
   "/register",
-  [
-    body("email", "no valid email").isEmail().trim().normalizeEmail(),
-
-    body("password", "password should have 10 letters")
-      .trim()
-      .isLength({ min: 10 }),
-  ],
+  [body("email", "no valid email").isEmail().trim().normalizeEmail()],
   UserValidator,
   register
 );
 router.post(
   "/login",
   [body("email", "no valid email").isEmail().trim().normalizeEmail()],
-
   UserValidator,
   login
 );
