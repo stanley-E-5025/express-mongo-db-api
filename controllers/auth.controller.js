@@ -1,5 +1,9 @@
 import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
+import {
+  RefreshTokenGenerator,
+  TokenGenerator,
+} from "../helpers/TokenGenerator.js";
 
 export const login = async (req, res) => {
   const { email } = req.body;
@@ -12,11 +16,9 @@ export const login = async (req, res) => {
         error: "this user don't exist ",
       });
 
-    // create JWT
-    const token = jwt.sign({ uid: user._id }, process.env.JWT_PASSWORD);
-    res.json({
-      token,
-    });
+    const { token, expiresIn } = TokenGenerator(user.id);
+    RefreshTokenGenerator(user.id, res);
+    return res.json({ token, expiresIn });
   } catch (error) {}
 };
 
@@ -27,16 +29,17 @@ export const register = async (req, res) => {
     let user = await User.findOne({ email });
 
     if (user) throw { code: 400 };
+    else {
+      user = new User({
+        email,
+        username,
+      });
 
-    user = new User({
-      email,
-      username,
-    });
-
-    user.save();
-    res.json({
-      ok: true,
-    });
+      user.save();
+      res.json({
+        ok: true,
+      });
+    }
   } catch (error) {
     if (error.code === 400) {
       return res.status(400).json({
@@ -47,5 +50,32 @@ export const register = async (req, res) => {
     return res.status(500).json({
       error: "server error",
     });
+  }
+};
+
+export const userInfo = async (req, res) => {
+  try {
+    let user = await User.findById(req.uid).lean();
+
+    return res.json({
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const cookieToken = req.cookies.refreshtoken;
+
+    if (!cookieToken) throw new Error("token not exist");
+
+    const { uid } = jwt.verify(cookieToken, process.env.JWT_REFRESH);
+
+    const { token, expiresIn } = TokenGenerator(uid);
+    return res.json({ token, expiresIn });
+  } catch (error) {
+    console.log(error);
   }
 };

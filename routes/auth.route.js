@@ -1,7 +1,8 @@
 import expres from "express";
-import { login, register } from "../controllers/auth.controller.js";
+import { login, register, userInfo ,refreshToken } from "../controllers/auth.controller.js";
 import { body } from "express-validator";
 import UserValidator from "../middlewares/user-fields-validator.js";
+import { routerTokenValidator } from "../middlewares/route-token-validator.js";
 
 const router = expres.Router();
 
@@ -17,5 +18,8 @@ router.post(
   UserValidator,
   login
 );
+
+router.get("/user", routerTokenValidator, userInfo);
+router.get("/refresh" , refreshToken)
 
 export default router;
