@@ -8,14 +8,12 @@
   </head>
   <body>
     <form id="form">
-      <button>ok</button>
+      <button>My user</button>
     </form>
     <div id="user"></div>
 
     <script>
       const form = document.getElementById("form");
-      const email = document.getElementById("email");
-      const username = document.getElementById("username");
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -39,7 +37,7 @@
 
           if (res) {
             const data = await res.json();
-            console.log(data);
+            alert(JSON.stringify(data));
           }
         } catch (error) {
           console.log(error.message);

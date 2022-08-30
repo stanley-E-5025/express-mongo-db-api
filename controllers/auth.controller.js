@@ -1,5 +1,4 @@
 import { User } from "../models/User.js";
-import jwt from "jsonwebtoken";
 import {
   RefreshTokenGenerator,
   TokenGenerator,
@@ -67,14 +66,22 @@ export const userInfo = async (req, res) => {
 
 export const refreshToken = async (req, res) => {
   try {
-    const cookieToken = req.cookies.refreshtoken;
+    const { token, expiresIn } = TokenGenerator(req.uid);
 
-    if (!cookieToken) throw new Error("token not exist");
-
-    const { uid } = jwt.verify(cookieToken, process.env.JWT_REFRESH);
-
-    const { token, expiresIn } = TokenGenerator(uid);
+    // return the token to the response
     return res.json({ token, expiresIn });
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const logOut = (req, res) => {
+  try {
+    res.clearCookie("refreshtoken");
+    res.json({
+      ok: true,
+    });
   } catch (error) {
     console.log(error);
   }

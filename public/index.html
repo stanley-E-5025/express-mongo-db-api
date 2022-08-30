@@ -14,7 +14,22 @@
       <button>login</button>
     </form>
 
+    <button id="close">logOut</button>
+
     <script>
+      const logOut = document.getElementById("close");
+
+      logOut.addEventListener("click", async () => {
+        const res = await fetch("/api/auth/v1/logout", {
+          method: "GET",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log(res);
+      });
       const form = document.getElementById("form");
       const email = document.getElementById("email");
       const username = document.getElementById("username");

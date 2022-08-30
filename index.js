@@ -11,5 +11,5 @@ app.use("/api/auth/v1", router);
 app.use(express.static("public"));
 
 app.listen(process.env.PORT || 3001, () => {
-  console.log("OK");
+  console.log(`Host runing in port ${process.env.PORT || 3001} 📟`);
 });
