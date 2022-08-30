@@ -59,3 +59,25 @@ export const createNotes = async (req, res) => {
     console.log(error);
   }
 };
+
+export const updateNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, body } = req.body;
+    const note = await Notes.findById(id);
+
+    /* if (!note.uid.equals(req.uid)) {
+      return res.status(401).json({ error: "not found" });
+    }
+ */
+
+    note.body = body;
+    note.title = title;
+
+    await note.save();
+
+    return res.json({ note });
+  } catch (error) {
+    res.json({ error: error.message } || { error: error });
+  }
+};
